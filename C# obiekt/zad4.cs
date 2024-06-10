@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 
-
 public abstract class Produkt
 {
-    private string nazwa;
-    private decimal cenaNetto;
-    private string kategoriaVAT;
-    private string krajPochodzenia;
+    public string Nazwa { get; set; }
+    public decimal CenaNetto { get; set; }
+    public string KategoriaVAT { get; set; }
+    public string KrajPochodzenia { get; set; }
 
     protected static Dictionary<string, decimal> StawkiVAT = new Dictionary<string, decimal>
     {
@@ -25,117 +24,36 @@ public abstract class Produkt
         "Hiszpania"
     };
 
-    public string Nazwa
-    {
-        get => nazwa;
-        set => nazwa = value ?? throw new ArgumentNullException(nameof(Nazwa));
-    }
-
-    public decimal CenaNetto
-    {
-        get => cenaNetto;
-        set
-        {
-            if (value < 0) throw new ArgumentOutOfRangeException(nameof(CenaNetto));
-            cenaNetto = value;
-        }
-    }
-
-    public string KategoriaVAT
-    {
-        get => kategoriaVAT;
-        set
-        {
-            if (!StawkiVAT.ContainsKey(value)) throw new ArgumentException("Niepoprawna kategoria VAT");
-            kategoriaVAT = value;
-        }
-    }
-
     public virtual decimal CenaBrutto => CenaNetto * (1 + StawkiVAT[KategoriaVAT]);
-
-    public string KrajPochodzenia
-    {
-        get => krajPochodzenia;
-        set
-        {
-            if (!DozwoloneKraje.Contains(value)) throw new ArgumentException("Niepoprawny kraj pochodzenia");
-            krajPochodzenia = value;
-        }
-    }
 }
-
 
 public abstract class ProduktSpożywczy<T> : Produkt
 {
-    private T kalorie;
-
-    protected static HashSet<string> DozwoloneAlergeny = new HashSet<string>
-    {
-        "Orzechy",
-        "Mleko",
-        "Jajka",
-        "Pszenica"
-    };
-
-    public T Kalorie
-    {
-        get => kalorie;
-        set
-        {
-            if (typeof(T) == typeof(decimal) && Convert.ToDecimal(value) < 0)
-                throw new ArgumentOutOfRangeException(nameof(Kalorie));
-            kalorie = value;
-        }
-    }
-
+    public T Kalorie { get; set; }
     public HashSet<string> Alergeny { get; set; } = new HashSet<string>();
 }
-
 
 public class ProduktSpożywczyNaWagę : ProduktSpożywczy<decimal>
 {
 }
 
-
 public class ProduktSpożywczyPaczka : ProduktSpożywczy<decimal>
 {
-    private decimal waga;
-
-    public decimal Waga
-    {
-        get => waga;
-        set
-        {
-            if (value < 0) throw new ArgumentOutOfRangeException(nameof(Waga));
-            waga = value;
-        }
-    }
+    public decimal Waga { get; set; }
 }
-
 
 public class ProduktSpożywczyNapój : ProduktSpożywczyPaczka
 {
-    private uint objętość;
-
-    public uint Objętość
-    {
-        get => objętość;
-        set => objętość = value;
-    }
+    public uint Objętość { get; set; }
 }
-
 
 public class Wielopak : Produkt
 {
     public Produkt Produkt { get; set; }
     public ushort Ilość { get; set; }
 
-    public override decimal CenaBrutto => CenaNetto * (1 + StawkiVAT[Produkt.KategoriaVAT]);
-
-    public override string KategoriaVAT => Produkt.KategoriaVAT;
-    public override string KrajPochodzenia => Produkt.KrajPochodzenia;
+    public override decimal CenaBrutto => Produkt.CenaBrutto * Ilość;
 }
-
 
 class Program
 {
@@ -179,8 +97,7 @@ class Program
             Wielopak wielopakSoków = new Wielopak
             {
                 Produkt = sok,
-                Ilość = 6,
-                CenaNetto = 24.00m // CenaNetto całego wielopaku
+                Ilość = 6
             };
 
             Console.WriteLine($"Produkt: {jabłko.Nazwa}, Cena Brutto: {jabłko.CenaBrutto}");
