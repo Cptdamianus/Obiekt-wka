@@ -138,7 +138,15 @@ public class Wektor
 
     public override int GetHashCode()
     {
-        return współrzędne.GetHashCode();
+        unchecked
+    {
+        int hash = 17;
+        foreach (var coord in współrzędne)
+        {
+            hash = hash * 23 + coord.GetHashCode();
+        }
+        return hash;
+    }
     }
 
     public static bool operator ==(Wektor V, Wektor W)
