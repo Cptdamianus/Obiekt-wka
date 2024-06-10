@@ -137,8 +137,8 @@ public class Wektor
     }
 
     public override int GetHashCode()
-    {
-        unchecked
+{
+    unchecked
     {
         int hash = 17;
         foreach (var coord in współrzędne)
@@ -147,7 +147,7 @@ public class Wektor
         }
         return hash;
     }
-    }
+}
 
     public static bool operator ==(Wektor V, Wektor W)
     {
