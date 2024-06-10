@@ -3,7 +3,7 @@ using System.Linq;
 
 public class Wektor
 {
-    private double[] współrzędne;
+    protected double[] współrzędne;
 
     public Wektor(byte wymiar)
     {
