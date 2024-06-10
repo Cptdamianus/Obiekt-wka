@@ -86,7 +86,7 @@ public class Macierz<T> : IEquatable<Macierz<T>>
         return false;
     }
 
-    /
+    
     public override int GetHashCode()
     {
         int hash = 17;
